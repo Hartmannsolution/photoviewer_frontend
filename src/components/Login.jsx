@@ -1,0 +1,32 @@
+import { useState } from "react";
+import {Button, Form, Row, Col} from 'react-bootstrap';
+const LogIn = ({ login }) => {
+    const init = { username: "", password: "" };
+    const [loginCredentials, setLoginCredentials] = useState(init);
+   
+    const performLogin = (evt) => {
+      evt.preventDefault();
+      login(loginCredentials.username, loginCredentials.password);
+    }
+    const onChange = (evt) => {
+      setLoginCredentials({ ...loginCredentials,[evt.target.id]: evt.target.value });
+    }
+   
+    return (
+        <Form className='d-flex' onChange={onChange}>
+          {/* <Row>
+            <Col>Login</Col>
+          <Col><Form.Control size="sm" placeholder="User Name" id="username" /></Col>
+          <Col><Form.Control size="sm" placeholder="Password" id="password" /></Col>
+          <Col><Button variant="outline-light" size="sm" onClick={performLogin}>Login</Button></Col>
+          </Row> */}
+
+          <Form.Control size="sm" placeholder="User Name" id="username" />
+          <Form.Control size="sm" placeholder="Password" id="password" />
+          <Button variant="outline-light" size="sm" onClick={performLogin}>Login</Button>
+
+        </Form>
+    )
+}
+
+export default LogIn;
