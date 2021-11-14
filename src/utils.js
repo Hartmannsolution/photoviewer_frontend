@@ -40,7 +40,6 @@ function fetchAny(url, callback, method, withToken, body) {
       else { console.log("Network error"); }
     }
     );
-  console.log(options);
 }
 
 const login = (user, password) => {
@@ -70,4 +69,5 @@ const logout = () => {
   localStorage.removeItem("jwtToken");
 }
 
-export default { fetchAny, login, setToken, getToken, loggedIn, logout };
+const utils = { fetchAny, login, setToken, getToken, loggedIn, logout };
+export default utils;
