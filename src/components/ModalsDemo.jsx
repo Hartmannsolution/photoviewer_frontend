@@ -128,7 +128,7 @@ const MySelect = ({isMulti,image, setImage, items}) => {
       }}
       options={items}
       value={selectedTags}
-      key= {image.tags}
+      key= {image.tags} //needed to get a rerender to show the tags for some reason
     />
   );
 };

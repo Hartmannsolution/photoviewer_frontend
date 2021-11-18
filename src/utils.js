@@ -42,11 +42,21 @@ function fetchAny(url, callback, method, withToken, body) {
     );
 }
 
-const login = (user, password) => {
-  const options = makeOptions("POST", true, { username: user, password: password });
-  return fetch(properties.backendURL + "login", options)
-    .then(handleHttpErrors) 
-    .then(res => { setToken(res.token) })
+// const login = (user, password) => {
+//   const options = makeOptions("POST", true, { username: user, password: password });
+//   console.log('CREDENTIALS in LOGIN: ',user, password);
+//   return fetch(properties.cloudURL + "login", options)
+//     .then(handleHttpErrors) 
+//     .then(res => { setToken(res.token) })
+// }
+const login = (user, password, setLoggedIn) => {
+  return fetchAny(
+    properties.cloudURL + "login"
+    , res => { setToken(res.token); setLoggedIn(true); }
+    , 'POST'
+    , true
+    ,  { username: user, password: password }
+    )
 }
 
 //getToken,
@@ -65,8 +75,9 @@ const loggedIn = () => {
   return getToken() != null;
 }
 
-const logout = () => {
+const logout = (setLoggedIn) => {
   localStorage.removeItem("jwtToken");
+  setLoggedIn(false);
 }
 
 const utils = { fetchAny, login, setToken, getToken, loggedIn, logout };
