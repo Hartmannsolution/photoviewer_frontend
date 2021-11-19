@@ -15,22 +15,28 @@ const ShowImages = (props) => {
             setImages(data);
         });
     },[imageUrl]);
+
     const handleClick = (evt) => {
         const name = evt.currentTarget.getAttribute('name');
         const currentImage = images.filter(img=>img.name === name)[0];
         setImage({...currentImage });
         setModalShow(true);
     };
+
+    const updateImages = (image) => {
+        const idx = images.findIndex(img=>img.name === image.name);
+        console.log('IDX: ',idx);
+        images[idx] = image;
+    };
+
     return (
         <>
             {images.map(image => {
-                // image.viewno = image.viewNo;
-                // delete image.viewNo['viewNo']; //delete viewNo since react will not allow capital letters in props
                 return (
                     <SingleImage key={image.name} image={image} src={image.location + image.name} handleClick={handleClick} />
                 )
             })}
-            <ModalsDemo setModalShow={setModalShow} modalShow={modalShow} image={image} baseUrl={props.baseUrl} />
+            <ModalsDemo setModalShow={setModalShow} modalShow={modalShow} image={image} updateImages={updateImages} baseUrl={props.baseUrl} />
         </>);
 };
 export default ShowImages;

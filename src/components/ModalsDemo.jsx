@@ -7,7 +7,7 @@ import properties from '../properties';
 const Main = (props) => {
   return (
     <>
-      <MyModal show={props.modalShow} onHide={() => props.setModalShow(false)} image={props.image} baseUrl={props.baseUrl} setModalShow={props.setModalShow} />
+      <MyModal show={props.modalShow} onHide={() => props.setModalShow(false)} image={props.image} updateImages={props.updateImages} baseUrl={props.baseUrl} setModalShow={props.setModalShow} />
     </>
   );
 };
@@ -35,9 +35,14 @@ const MyModal = (props) => {
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (image.name && image.description) {
-      //utils.fetchAny(`${props.baseUrl}photo`, (response) => { console.log(response); }, 'POST', true, image);
-      console.log('IMAGE: ', image);
+    //TODO: set updated image back in collection (so when clicking image again changes will show).
+    if (image.name) {
+      delete image.largeLocation;
+      console.log('IMAGE before submit: ',JSON.stringify(image));
+      const postUrl = `${properties.cloudURL}photo`;
+      console.log(postUrl);
+      utils.fetchAny(`${properties.cloudURL}photo/${image.name}`, (response) => { console.log('PUT response: ',response); }, 'PUT', true, image);
+      props.updateImages(image);
       props.setModalShow(false);
     }
   }
@@ -76,22 +81,21 @@ const MyModal = (props) => {
 }
 
 export { Main as default, MyModal };
-
 const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags }) => {
 
   return (
     <>
       <Form onSubmit={handleSubmit}>
         <Row className="mb-3">
+
           <Form.Group as={Col} controlId="title">
             <Form.Label>Title</Form.Label>
-            {/* image.name || '' is to avoid the error "A component is changing an uncontrolled input to be controlled." */}
             <Form.Control type="text" value={image.title || ''} placeholder="Enter Title" onChange={handleChange} />
           </Form.Group>
 
           <Form.Group as={Col} controlId="viewno">
             <Form.Label>View No</Form.Label>
-            <Form.Control type="text" value={image.viewNo || ''} placeholder="Change the view no" onChange={handleChange} />
+            <Form.Control type="text" value={image.viewno || ''} placeholder="Change the view no" onChange={handleChange} />
           </Form.Group>
 
           <Form.Group as={Col} controlId="my_multiselect_field">

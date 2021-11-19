@@ -1,5 +1,6 @@
 import properties from "./properties";
-function makeOptions(method, withToken, body) {
+
+const makeOptions = (method, withToken, body) => {
   method = method ? method : 'GET';
   var opts = {
     method: method,
@@ -19,14 +20,14 @@ function makeOptions(method, withToken, body) {
   return opts;
 }
 
-function handleHttpErrors(res) {
+const handleHttpErrors = (res) => {
   if (!res.ok) {
     return Promise.reject({ status: res.status, fullError: res.json() })
   }
   return res.json();
 }
 
-function fetchAny(url, callback, method, withToken, body) {
+const fetchAny = (url, callback, method, withToken, body) => {
   if (properties.backendURL)
     url = properties.backendURL + url;
   const options = makeOptions(method, withToken, body);
@@ -35,20 +36,13 @@ function fetchAny(url, callback, method, withToken, body) {
     .then(data => callback(data))
     .catch(err => {
       if (err.status) {
-        err.fullError.then(e => console.log(e.detail))
+        err.fullError.then(e => console.log('ERROR: ',e.message));
       }
       else { console.log("Network error"); }
     }
     );
 }
 
-// const login = (user, password) => {
-//   const options = makeOptions("POST", true, { username: user, password: password });
-//   console.log('CREDENTIALS in LOGIN: ',user, password);
-//   return fetch(properties.cloudURL + "login", options)
-//     .then(handleHttpErrors) 
-//     .then(res => { setToken(res.token) })
-// }
 const login = (user, password, setLoggedIn) => {
   return fetchAny(
     properties.cloudURL + "login"
@@ -59,10 +53,6 @@ const login = (user, password, setLoggedIn) => {
     )
 }
 
-//getToken,
-//loggedIn,
-//login,
-//logout,
 const setToken = (token) => {
   localStorage.setItem('jwtToken', token)
 }
