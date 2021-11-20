@@ -1,6 +1,6 @@
 //npm install react-bootstrap@next bootstrap@5.1.1
 import { Modal, Container, Row, Col, Button, Form } from 'react-bootstrap';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import utils from '../utils';
 import properties from '../properties';
@@ -72,17 +72,20 @@ const MyModal = (props) => {
               <ImageForm handleSubmit={handleSubmit} image={image} handleChange={handleChange} setImage={setImage} tags={tags} />
             </Container>
           </Modal.Body>
-          <Modal.Footer>
+          {/* <Modal.Footer>
             <Button onClick={props.onHide}>Close</Button>
-          </Modal.Footer>
+          </Modal.Footer> */}
         </>}
     </Modal>
   );
 }
 
 export { Main as default, MyModal };
-const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags }) => {
 
+const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags }) => {
+  
+  const innerRef = useRef();
+  useEffect(() => innerRef.current && innerRef.current.focus()); // to set focus on title input field (see: https://stackoverflow.com/questions/58830133/autofocus-on-input-when-opening-modal-does-not-work-react-bootstrap).
   return (
     <>
       <Form onSubmit={handleSubmit}>
@@ -90,7 +93,7 @@ const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags }) => {
 
           <Form.Group as={Col} controlId="title">
             <Form.Label>Title</Form.Label>
-            <Form.Control type="text" value={image.title || ''} placeholder="Enter Title" onChange={handleChange} />
+            <Form.Control ref={innerRef} type="text" value={image.title || ''} placeholder="Enter Title" onChange={handleChange} />
           </Form.Group>
 
           <Form.Group as={Col} controlId="viewno">

@@ -79,16 +79,18 @@ const App = (props) => {
 };
 
 const Header2 = ({ loggedIn, login, logout, location }) => {
-  console.log('LOOGED IN: ',loggedIn)
+  console.log('LOOGED IN: ', loggedIn);
+  console.log('location: ', location);
   return (
     <Navbar bg="dark" variant="dark"> {/* expand="lg"> */}
       <Container>
         <Navbar.Brand href="/">Photo Gallery</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto" activeKey={location.pathname} className="mr-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/joergensen">Joergensen</Nav.Link>
+          <Nav className="me-auto" activeKey={`/familyphotos${location.pathname}`} className="mr-auto">
+          {/* <Nav className="me-auto" className="mr-auto"> */}
+            <Nav.Link href="/familyphotos/">Home</Nav.Link>
+            <Nav.Link href="/familyphotos/joergensen">Joergensen</Nav.Link>
 
             {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
           <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
@@ -117,4 +119,5 @@ const Header2 = ({ loggedIn, login, logout, location }) => {
 //TODO: Find out why this causes a total page reload.
 
 const Header = withRouter(Header2);
+// const Header = Header2;
 export default App;

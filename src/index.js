@@ -10,4 +10,4 @@ const AppWithRouter = () => {
         </Router>
     );
 };
-ReactDOM.render( < AppWithRouter / > , document.getElementById("root"));
+ReactDOM.render( < AppWithRouter /> , document.getElementById("root"));

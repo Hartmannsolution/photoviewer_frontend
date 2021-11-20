@@ -1,6 +1,6 @@
 {
     "homepage": "/familyphotos",
-    "name ": "react-demos",
+    "name ": "familyphotos",
     "version": "0.1.0",
     "private": true,
     "dependencies": {
