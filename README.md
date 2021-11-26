@@ -1,9 +1,9 @@
 # Demo code to show case many different (bootstrap mostly) controls and techniques
 
 ## TODO
-1. Add article to each tag (to give information about people and places)
-2. Add shortname/id to tag (that should contain no spaces)
-3. Add 
+1. Form to create tags and edit description
+3. Show error when login fails
+4. Backend: backup table for old image descriptions with login info
 
 
 

@@ -36,7 +36,9 @@ const fetchAny = (url, callback, method, withToken, body) => {
     .then(data => callback(data))
     .catch(err => {
       if (err.status) {
-        err.fullError.then(e => console.log('ERROR: ',e.message));
+        err.fullError.then(e =>{
+          if(Number(e.code) === 403) alert('You need to login again (token may have timed out). Logout and in again');
+        });//+JSON.stringify(e)));
       }
       else { console.log("Network error"); }
     }

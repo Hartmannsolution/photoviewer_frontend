@@ -1,7 +1,9 @@
+// ################### IMPORTS #################
 import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Button, Navbar, Nav, Container } from 'react-bootstrap';
+import { Button, Navbar, Nav, Container} from 'react-bootstrap';
 import ShowImages from './components/showimages/ShowImages';
+import Admin from './components/Admin';
 import config from './properties';
 import {
   Switch,
@@ -13,7 +15,7 @@ import { withRouter } from "react-router";
 import utils from "./utils";
 import LogIn from "./components/Login";
 
-
+// ################# LoggedIn Component #################
 const LoggedIn = () => {
   const [user, setUser] = useState("");
 
@@ -33,7 +35,7 @@ const LoggedIn = () => {
     </>
   );
 }
-
+// ################### HOME ###################
 const Home = () => {
   return (
     <div>
@@ -42,6 +44,7 @@ const Home = () => {
     </div>
   );
 }
+// ################### NOMATCH #################
 const NoMatch = () => {
   let location = useLocation();
 
@@ -53,22 +56,27 @@ const NoMatch = () => {
     </div>
   );
 }
-
+// ################### APP #################
 const App = (props) => {
-  const [loggedIn, setLoggedIn] = useState(false)
-  const logout = () => { utils.logout(setLoggedIn); }
+  const [loggedIn, setLoggedIn] = useState(utils.getToken);
+  const logout = () => { utils.logout(setLoggedIn); };
   const login = (user, pass) => {
     utils.login(user, pass, setLoggedIn);
-  }
+  };
   return (
     <div>
-      <Header login={login} loggedIn={loggedIn} logout={logout} />
+      <RouterHeader login={login} loggedIn={loggedIn} logout={logout} />
       <Switch>
         <Route exact path="/">
           <Home msg="Home" />
         </Route>
+        {/* %%%%%%%%%%%%%%%%%%%%%%% Joergensen %%%%%%%%%%%%%%%%%%%%%%% */}
         <Route path="/joergensen">
-          <ShowImages baseUrl={config.cloudURL} locationUrl={config.locationPart} set="joergensen" />
+          <ShowImages baseUrl={config.cloudURL} locationUrl={config.locationPart} set="joergensen" loggedIn={loggedIn} />
+        </Route>
+        {/* %%%%%%%%%%%%%%%%%%%%%%% Admin %%%%%%%%%%%%%%%%%%%%%%% */}
+        <Route path="/admin">
+          <Admin />
         </Route>
         <Route path="*">
           <NoMatch />
@@ -78,7 +86,8 @@ const App = (props) => {
   );
 };
 
-const Header2 = ({ loggedIn, login, logout, location }) => {
+// ################### HEADER #################
+const Header = ({ loggedIn, login, logout, location }) => {
   console.log('LOOGED IN: ', loggedIn);
   console.log('location: ', location);
   return (
@@ -87,19 +96,15 @@ const Header2 = ({ loggedIn, login, logout, location }) => {
         <Navbar.Brand href="/">Photo Gallery</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
+
+          {/* %%%%%%%%%%%%%%%%% Navigation %%%%%%%%%%%%%%%%%%%% */}
           <Nav className="me-auto" activeKey={`/familyphotos${location.pathname}`} className="mr-auto">
-          {/* <Nav className="me-auto" className="mr-auto"> */}
             <Nav.Link href="/familyphotos/">Home</Nav.Link>
             <Nav.Link href="/familyphotos/joergensen">Joergensen</Nav.Link>
-
-            {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-          <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-          <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-          <NavDropdown.Divider />
-          <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-        </NavDropdown> */}
+            {loggedIn && <Nav.Link href="/familyphotos/admin">Admin</Nav.Link>}
           </Nav>
+
+          {/* %%%%%%%%%%%%%%%%% Login %%%%%%%%%%%%%%%%%%%% */}
           <Navbar.Collapse className="justify-content-end">
             <Navbar.Text>
               {
@@ -116,8 +121,7 @@ const Header2 = ({ loggedIn, login, logout, location }) => {
     </Navbar>
   );
 }
-//TODO: Find out why this causes a total page reload.
+// TODO: Find out why this causes a reload of page
+const RouterHeader = withRouter(Header);
 
-const Header = withRouter(Header2);
-// const Header = Header2;
 export default App;
