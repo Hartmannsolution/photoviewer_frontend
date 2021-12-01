@@ -1,6 +1,7 @@
 import { Modal, Container, Row, Col, Button, Form } from 'react-bootstrap';
 import React, { useState, useEffect, useRef } from 'react';
-import CreatableSelect from 'react-select/creatable';
+
+import TagSelect from './TagSelect';
 import utils from '../utils';
 import properties from '../properties';
 // ############################## MODALS DEMO COMPONENT ###################################
@@ -24,7 +25,7 @@ const Main = (props) => {
 // ################################# MYMODAL COMPONENT #################
 const MyModal = (props) => {
   const [image, setImage] = useState(props.image);
-  const [tags, setTags] = useState([]);
+  const [options, setOptions] = useState([]);
   const getLargeLocation = (name) => {
     return name.replace('TN', 'WEB');
   };
@@ -35,7 +36,7 @@ const MyModal = (props) => {
     setImage({ largeLocation: large, ...props.image });
     utils.fetchAny(`${properties.cloudURL}tag`, data => {
       const tags = data.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-      setTags(tags.map(tag => { return { value: tag.name, label: tag.name } })); //convert tags to options for the dropdown
+      setOptions(tags.map(tag => { return { value: tag.name, label: tag.name } })); //convert tags to options for the dropdown
     });
   }, [props.image]);
 
@@ -45,9 +46,6 @@ const MyModal = (props) => {
   const updateImage = () => {
     if (image.name) {
       delete image.largeLocation;
-      console.log('IMAGE before submit: ', JSON.stringify(image));
-      const postUrl = `${properties.cloudURL}photo`;
-      console.log(postUrl);
       utils.fetchAny(`${properties.cloudURL}photo/${image.name}`, (response) => { console.log('PUT response: ', response); }, 'PUT', true, image);
       props.updateImages(image);
       
@@ -93,7 +91,7 @@ const handleNext = (evt) => {
                   image={image}
                   handleChange={handleChange}
                   setImage={setImage}
-                  tags={tags}
+                  options={options}
                  handleNext={handleNext}
                   clickNext={props.setNextImage}
                 />
@@ -130,11 +128,16 @@ const Tag = ({ name, handleClick }) => {
 }
 
 // ################### IMAGE FORM COMPONENT (when logged in) #########################
-const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags, handleNext}) => {
+const ImageForm = ({ handleSubmit, image, handleChange, options, handleNext}) => {
   const innerRef = useRef();
+  const [tags, setTags] = useState(image.tags);
   useEffect(
     () => innerRef.current && innerRef.current.focus()
     , []); // to set focus on title input field (see: https://stackoverflow.com/questions/58830133/autofocus-on-input-when-opening-modal-does-not-work-react-bootstrap).
+
+  useEffect(()=>{
+    image.tags = tags;
+  },[tags]);
   return (
     <>
       <Form onSubmit={handleSubmit}> 
@@ -152,7 +155,9 @@ const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags, handleNe
 
           <Form.Group as={Col} controlId="my_multiselect_field">
             <Form.Label>Tags</Form.Label>
-            <MySelect isMulti image={image} setImage={setImage} items={tags} />
+            {/* TODO: Change this to take tags instead of an image */}
+            {/* <TagSelect isMulti image={image} setImage={setImage} items={tags} /> */}
+            <TagSelect isMulti tags={tags} setTags={setTags} options={options} />
           </Form.Group>
 
         </Row>
@@ -174,23 +179,6 @@ const ImageForm = ({ handleSubmit, image, handleChange, setImage, tags, handleNe
   );
 }
 
-// ################### MY SELECT COMPONENT #########################
-const MySelect = ({ isMulti, image, setImage, items }) => {
-  const selectedTags = image.tags.map(tag => { return { label: tag.name, value: tag.name } });
 
-  return (
-    <CreatableSelect
-      isMulti={isMulti}
-      onChange={evt => {
-        //onChange callback (in react-select CreateableSelect component) automatically updates a selected array with: [{value: "My Tag", label: "My Tag"}]
-        image.tags = evt.map(el => { return { name: el.label } });
-        setImage({ ...image });
-      }}
-      options={items}
-      value={selectedTags}
-      key={image.tags} //needed to get a rerender to show the tags for some reason
-    />
-  );
-};
 
 // ################### END #################

@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Navbar, Nav, Container} from 'react-bootstrap';
 import ShowImages from './components/showimages/ShowImages';
 import Admin from './components/Admin';
+import Home from './Home';
 import config from './properties';
 import {
   Switch,
@@ -35,15 +36,7 @@ const LoggedIn = () => {
     </>
   );
 }
-// ################### HOME ###################
-const Home = () => {
-  return (
-    <div>
-      <h2>Photo collection site</h2>
-      <p>This is a site for showing images with text for different family photo collections. Each collection has its own tab.</p>
-    </div>
-  );
-}
+
 // ################### NOMATCH #################
 const NoMatch = () => {
   let location = useLocation();
@@ -68,11 +61,11 @@ const App = (props) => {
       <RouterHeader login={login} loggedIn={loggedIn} logout={logout} />
       <Switch>
         <Route exact path="/">
-          <Home msg="Home" />
+          <Home />
         </Route>
         {/* %%%%%%%%%%%%%%%%%%%%%%% Joergensen %%%%%%%%%%%%%%%%%%%%%%% */}
         <Route path="/joergensen">
-          <ShowImages baseUrl={config.cloudURL} locationUrl={config.locationPart} set="joergensen" loggedIn={loggedIn} />
+          <ShowImages url={config.cloudURL + config.locationPart + "joergensen"} loggedIn={loggedIn} tags={[]}/>
         </Route>
         {/* %%%%%%%%%%%%%%%%%%%%%%% Admin %%%%%%%%%%%%%%%%%%%%%%% */}
         <Route path="/admin">

@@ -111,5 +111,3 @@ export default Admin;
   //################### ADD USER COMPONENT #########################
   const AddUser = () => <h2>Not implemented yet</h2>;
   
-  //TODO: Find out why this causes a total page reload.
-  // const Header = Header2;
