@@ -17,6 +17,7 @@ const Main = (props) => {
         baseUrl={props.baseUrl}
         setModalShow={props.setModalShow}
         loggedIn={props.loggedIn}
+        logout={props.logout}
         setNextImage={props.setNextImage}
       />
     </>
@@ -26,29 +27,54 @@ const Main = (props) => {
 const MyModal = (props) => {
   const [image, setImage] = useState(props.image);
   const [options, setOptions] = useState([]);
+
+  /**
+   * 
+   * @param {string} name 
+   * @returns The location of the image in large resolution.
+   */
   const getLargeLocation = (name) => {
     return name.replace('TN', 'WEB');
   };
 
-
   useEffect(() => {
     const large = getLargeLocation(props.image.location + props.image.name);
     setImage({ largeLocation: large, ...props.image });
+    // fetch the tags to choose from
     utils.fetchAny(`${properties.cloudURL}tag`, data => {
       const tags = data.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
       setOptions(tags.map(tag => { return { value: tag.name, label: tag.name } })); //convert tags to options for the dropdown
     });
   }, [props.image]);
 
+  /**
+   * 
+   * @param {input element event} evt 
+   * Updates the image with the new information as it is entered into the form elements.
+   */
   const handleChange = (evt) => {
     setImage({ ...image, [evt.target.id]: evt.target.value });
+    console.log(evt.target, 'VALUE: ', evt.target.value, ' ID: ', evt.target.id);
   }
+
+  /**
+   * Updates current image on server
+   */
   const updateImage = () => {
     if (image.name) {
       delete image.largeLocation;
-      utils.fetchAny(`${properties.cloudURL}photo/${image.name}`, (response) => { console.log('PUT response: ', response); }, 'PUT', true, image);
-      props.updateImages(image);
-      
+      //TODO: add logout to below statment
+      utils.fetchAny(`${properties.cloudURL}photo/${image.name}`,
+        (response) => {
+
+          props.updateImages(image);
+          console.log('PUT response: ', response);
+        },
+        'PUT',
+        true,
+        image,
+        props.logout);
+      console.log('UPDATE', image);
     }
   }
 
@@ -57,11 +83,15 @@ const MyModal = (props) => {
     updateImage();
     props.setModalShow(false);
   }
-const handleNext = (evt) => {
-  updateImage();
-  props.setNextImage();
 
-}
+  /**
+   * Update image on server and then loads the next image into the modal. 
+   */
+  const handleNext = () => {
+    updateImage();
+    props.setNextImage();
+  }
+
   return (
     <Modal
       show={props.show}
@@ -77,7 +107,7 @@ const handleNext = (evt) => {
         <>
           <Modal.Header closeButton>
             <Modal.Title id="contained-modal-title-vcenter">
-              {props.image.title ? image.title : image.name}
+              {props.image.title ? image.title : props.image.name.split('_').slice(0, -1).join('')}
 
             </Modal.Title>
           </Modal.Header>
@@ -92,7 +122,7 @@ const handleNext = (evt) => {
                   handleChange={handleChange}
                   setImage={setImage}
                   options={options}
-                 handleNext={handleNext}
+                  handleNext={handleNext}
                   clickNext={props.setNextImage}
                 />
                 :
@@ -128,19 +158,26 @@ const Tag = ({ name, handleClick }) => {
 }
 
 // ################### IMAGE FORM COMPONENT (when logged in) #########################
-const ImageForm = ({ handleSubmit, image, handleChange, options, handleNext}) => {
+const ImageForm = ({ handleSubmit, image, handleChange, options, handleNext }) => {
+
+  /**
+   * Set focus on title input field when form is loaded. (see: https://stackoverflow.com/questions/58830133/autofocus-on-input-when-opening-modal-does-not-work-react-bootstrap).
+   */
   const innerRef = useRef();
   const [tags, setTags] = useState(image.tags);
   useEffect(
     () => innerRef.current && innerRef.current.focus()
-    , []); // to set focus on title input field (see: https://stackoverflow.com/questions/58830133/autofocus-on-input-when-opening-modal-does-not-work-react-bootstrap).
+    , []);
 
-  useEffect(()=>{
+  /**
+   * Connect the chosen tags to the current image whenever tags changes.
+   */
+  useEffect(() => {
     image.tags = tags;
-  },[tags]);
+  }, [tags]);
   return (
     <>
-      <Form onSubmit={handleSubmit}> 
+      <Form onSubmit={handleSubmit}>
         <Row className="mb-3">
 
           <Form.Group as={Col} controlId="title">
@@ -155,8 +192,6 @@ const ImageForm = ({ handleSubmit, image, handleChange, options, handleNext}) =>
 
           <Form.Group as={Col} controlId="my_multiselect_field">
             <Form.Label>Tags</Form.Label>
-            {/* TODO: Change this to take tags instead of an image */}
-            {/* <TagSelect isMulti image={image} setImage={setImage} items={tags} /> */}
             <TagSelect isMulti tags={tags} setTags={setTags} options={options} />
           </Form.Group>
 

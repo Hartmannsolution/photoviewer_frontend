@@ -65,7 +65,7 @@ const App = (props) => {
         </Route>
         {/* %%%%%%%%%%%%%%%%%%%%%%% Joergensen %%%%%%%%%%%%%%%%%%%%%%% */}
         <Route path="/joergensen">
-          <ShowImages url={config.cloudURL + config.locationPart + "joergensen"} loggedIn={loggedIn} tags={[]}/>
+          <ShowImages url={config.cloudURL + config.locationPart + "joergensen"} loggedIn={loggedIn} tags={[]} logout={logout} />
         </Route>
         {/* %%%%%%%%%%%%%%%%%%%%%%% Admin %%%%%%%%%%%%%%%%%%%%%%% */}
         <Route path="/admin">
@@ -81,8 +81,6 @@ const App = (props) => {
 
 // ################### HEADER #################
 const Header = ({ loggedIn, login, logout, location }) => {
-  console.log('LOOGED IN: ', loggedIn);
-  console.log('location: ', location);
   return (
     <Navbar bg="dark" variant="dark"> {/* expand="lg"> */}
       <Container>

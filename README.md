@@ -2,7 +2,7 @@
 
 ## TODO
 1. Form to create tags and edit description
-3. Show error when login fails
+3. Show error when login fails and logout.
 4. Backend: backup table for old image descriptions with login info
 
 
