@@ -47,9 +47,7 @@ const sortImagesByTagAmount = (images, tags) => {
         map.set(image, getNumberOfTags(image, tags));
     }
     const sorted = new Map([...map].sort((a,b)=>b[1] - a[1]));
-    console.log(sorted)
     const sortedImages = [...sorted.keys()]; 
-    console.log(sortedImages)
     return sortedImages;
 } 
 
@@ -97,10 +95,6 @@ const handleClick = (evt) => {
 };
 
 const updateImages = (image) => {
-    // const idx = allImages.findIndex(img => img.name === image.name);
-    // console.log('IDX: ', idx);
-    // allImages[idx] = image;
-    // sortImagesByViewNo();
     getAllImages();
 };
 
@@ -110,7 +104,6 @@ const updateImages = (image) => {
 const setNextImage = () => {
     const found = allImages.findIndex((element) => element.name === image.name);
     const next = found < allImages.length - 1 ? found + 1 : 0
-    // console.log('INDEX', next, { ...images[next] });
     setImage({ ...allImages[next] });
 }
 

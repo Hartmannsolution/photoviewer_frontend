@@ -33,11 +33,17 @@ const MyModal = (props) => {
    * @param {string} name 
    * @returns The location of the image in large resolution.
    */
-  const getLargeLocation = (name) => {
-    return name.replace('TN', 'WEB');
+  const getLargeLocation = (locandname) => {
+    if(locandname.includes('TN')){ //Joergensen collection
+      return locandname.replace('TN', 'WEB');
+    } else if(locandname.includes('_Small')){ //BugelHartmann collection
+      return locandname.replace('_Small','');
+    } else if (locandname.includes('Thumbnail')) //BendixMadsen collection
+      return locandname.replaceAll('Thumbnail','Webview');
   };
 
   useEffect(() => {
+    
     const large = getLargeLocation(props.image.location + props.image.name);
     setImage({ largeLocation: large, ...props.image });
     // fetch the tags to choose from
@@ -54,7 +60,6 @@ const MyModal = (props) => {
    */
   const handleChange = (evt) => {
     setImage({ ...image, [evt.target.id]: evt.target.value });
-    console.log(evt.target, 'VALUE: ', evt.target.value, ' ID: ', evt.target.id);
   }
 
   /**
@@ -68,13 +73,11 @@ const MyModal = (props) => {
         (response) => {
 
           props.updateImages(image);
-          console.log('PUT response: ', response);
         },
         'PUT',
         true,
         image,
         props.logout);
-      console.log('UPDATE', image);
     }
   }
 
@@ -93,6 +96,7 @@ const MyModal = (props) => {
   }
 
   return (
+   
     <Modal
       show={props.show}
       onHide={props.onHide}
@@ -141,7 +145,6 @@ export { Main as default, MyModal };
 // ################### IMAGE INFO COMPONENT (Not logged in) #########################
 const ImageInfo = ({ image }) => {
   const [tag, setTag] = useState(undefined);
-  console.log('tag: ', tag);
   return (<>
     <h2>{image.title ? image.title : image.name}</h2>
     <p>{image.description}</p>

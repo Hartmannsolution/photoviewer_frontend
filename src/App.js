@@ -67,6 +67,13 @@ const App = (props) => {
         <Route path="/joergensen">
           <ShowImages url={config.cloudURL + config.locationPart + "joergensen"} loggedIn={loggedIn} tags={[]} logout={logout} />
         </Route>
+        <Route path="/bugelhartmann">
+          <ShowImages url={config.cloudURL + config.locationPart + "bugelhartmann"} loggedIn={loggedIn} tags={[]} logout={logout} />
+        </Route>
+        <Route path="/bendixmadsen">
+          <ShowImages url={config.cloudURL + config.locationPart + "bendixmadsen-BMFotoArkiv-Thumbnail"} // dash is replaced with slash on the server to represent sub folders
+          loggedIn={loggedIn} tags={[]} logout={logout} />
+        </Route>
         {/* %%%%%%%%%%%%%%%%%%%%%%% Admin %%%%%%%%%%%%%%%%%%%%%%% */}
         <Route path="/admin">
           <Admin />
@@ -89,9 +96,11 @@ const Header = ({ loggedIn, login, logout, location }) => {
         <Navbar.Collapse id="basic-navbar-nav">
 
           {/* %%%%%%%%%%%%%%%%% Navigation %%%%%%%%%%%%%%%%%%%% */}
-          <Nav className="me-auto" activeKey={`/familyphotos${location.pathname}`} className="mr-auto">
+          <Nav className="me-auto" activeKey={`/familyphotos${location.pathname}`} >
             <Nav.Link href="/familyphotos/">Home</Nav.Link>
             <Nav.Link href="/familyphotos/joergensen">Joergensen</Nav.Link>
+            <Nav.Link href="/familyphotos/bugelhartmann">Bugel Hartmann</Nav.Link>
+            <Nav.Link href="/familyphotos/bendixmadsen">Bendix Madsen</Nav.Link>
             {loggedIn && <Nav.Link href="/familyphotos/admin">Admin</Nav.Link>}
           </Nav>
 

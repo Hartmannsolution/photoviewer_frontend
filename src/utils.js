@@ -62,7 +62,7 @@ const fetchAny = (url, callback, method, withToken, body, logout) => {
           if(Number(e.code) === 403) alert('You need to login again (token may have timed out). Logout and in again'); //logout();
         });//+JSON.stringify(e)));
       }
-      else { console.log("Network error"); }
+      else { alert("Network error"); }
     }
     );
 }

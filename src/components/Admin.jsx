@@ -76,7 +76,6 @@ const EditTags = () => {
     evt.preventDefault();
     utils.fetchAny(config.cloudURL + 'tag/' + tag.name, (data) => {
       updateTags();
-      console.log('svar fra server: ', data);
     }
       , 'PUT'
       , true

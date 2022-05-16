@@ -7,7 +7,6 @@ const LogIn = ({ login }) => {
 
   const performLogin = (evt) => {
     evt.preventDefault();
-    console.log('Credentials: ',loginCredentials);
     login(loginCredentials.username, loginCredentials.password);
   }
   const onChange = (evt) => {

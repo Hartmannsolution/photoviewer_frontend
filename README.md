@@ -2,8 +2,13 @@
 
 ## TODO
 1. Form to create tags and edit description
-3. Show error when login fails and logout.
+3. Show error when token timed out or missing and logout.
 4. Backend: backup table for old image descriptions with login info
+5. Backend: add main image to tag
+6. Frontend Create a tagview on the modal containing: main image and description (including links to other tags)
+7. Create breadcrumbs for the tagsview so possible to navigate back to previous tags (use router for this)
+8. Create left, right key stroke for navigating between images on the modal.
+9. 
 
 
 
