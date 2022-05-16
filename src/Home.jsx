@@ -8,12 +8,6 @@ import ShowImages from './components/showimages/ShowImages';
 const Home = () => {
   const [options, setOptions] = useState([]);
   const [tags, setTags] = useState([]);
-  // useEffect(()=>{
-  //   utils.fetchAny(`${config.cloudURL}tag`, data => {
-  //     const tags = data.sort((a, b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-  //     setOptions(tags.map(tag => { return { value: tag.name, label: tag.name } })); //convert tags to options for the dropdown
-  //   });
-  // }, []); 
 
   useEffect(()=>{
     utils.fetchAny(`${config.cloudURL}tag`, data => {
