@@ -53,19 +53,13 @@ const MyModal = (props) => {
     });
   }, [props.image]);
 
-  /**
-   * 
-   * @param {input element event} evt 
-   * Updates the image with the new information as it is entered into the form elements.
-   */
   const handleChange = (evt) => {
+   // Updates the image with the new information as it is entered into the form elements.
     setImage({ ...image, [evt.target.id]: evt.target.value });
   }
 
-  /**
-   * Updates current image on server
-   */
   const updateImage = () => {
+    // updates current image on server and in the local collection
     if (image.name) {
       delete image.largeLocation;
       //TODO: add logout to below statment
