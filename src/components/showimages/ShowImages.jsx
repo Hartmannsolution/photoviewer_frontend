@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ModalsDemo from '../ModalsDemo';
 import './images.css';
+import properties from '../../properties';
 
 // #################### SHOWIMAGES #############################
 const ShowImages = ({ tags, url, loggedIn, baseUrl, logout }) => {
@@ -8,10 +9,24 @@ const ShowImages = ({ tags, url, loggedIn, baseUrl, logout }) => {
     const [modalShow, setModalShow] = useState(false);
     const [allImages, setAllImages] = useState([]);
     const [filteredImages, setFilteredImages] = useState([]);
+    const [imagesToShow, setImagesToShow] = useState([]); // set images paginated
     const [image, setImage] = useState({ name: '', title: '', description: '', viewno: '', tags: [] });
     const [startIndex, setStartIndex] = useState(0);
     const [hasMore, setHasMore] = useState(false);
-
+    const observer = useRef()                   // useRef is like a “box” that can hold a mutable value in its .current property. It lives as long as the components lifetime.
+    const lastImageRef = useCallback(           // The useCallback Hook only runs when one of its dependencies update. Usecase: Stop the inner callback from being updated on re-render (only on changes to dependent array elements)
+        (node) => {
+            if (observer.current) observer.current.disconnect();
+            observer.current = new IntersectionObserver((entries) => { //observer is a Ref (object with single property: current). Each entry in the list of thresholds is an IntersectionObserverEntry object describing one threshold that was crossed; that is, each entry describes how much of a given element is intersecting with the root element, whether or not the element is considered to be intersecting or not, and the direction in which the transition occurred.
+                if (entries[0].isIntersecting && true) {               // If any entry is intersecting and if there are more component/images etc. to load we react.
+                    setStartIndex((prev) => prev + 1);
+                    alert('HEY');
+                    console.log('SCROLLING',startIndex);
+                }
+            });
+            if (node) observer.current.observe(node);
+        }, []
+    );
 
     const filterImages = (images, tags) => {
         // Filters images by tags. To only show those images that have the given tags
@@ -57,21 +72,6 @@ const ShowImages = ({ tags, url, loggedIn, baseUrl, logout }) => {
         });
     }
 
-    const getPaginated = (index, number) => {
-        // get the paginated data to only load when last element crosses the thresshold.
-        if (hasMore) {
-            setHasMore(index * number < filteredImages.length);
-            const result = filteredImages.slice(index * number, number * index + number);
-            // setStartIndex(index + 1);
-            return result
-        }
-    }
-    const loadMore = () => {
-        // run when scrolling gets to end of images
-        //check if hasMore
-        // rerender by updating start index
-    }
-
     useEffect(() => {
         if (tags.length > 0) {
             const filtered = filterImages(allImages, tags);
@@ -82,6 +82,23 @@ const ShowImages = ({ tags, url, loggedIn, baseUrl, logout }) => {
             getAllImages();
         }
     }, [tags]);
+
+    useEffect(() => {
+        if (startIndex === 0 && filteredImages.length > 0) {
+            setImagesToShow(filteredImages.slice(0, 40));//properties.imagesPrPage));
+        } else {
+            const firstImageIdx = startIndex * properties.imagesPrPage;
+            const lastImageIdx = firstImageIdx + properties.imagesPrPage;
+            // alert(`${firstImageIdx},${lastImageIdx},${filteredImages.length}`);
+            if (filteredImages.length < firstImageIdx) { return }
+            if (filteredImages.length >= firstImageIdx && lastImageIdx <= filteredImages.length) {
+                const imagesToAdd = filteredImages.slice(firstImageIdx, lastImageIdx);
+                setImagesToShow([...imagesToShow, imagesToAdd]);
+                console.log("TESTIng IMAGES", imagesToShow, imagesToAdd, filteredImages);
+
+            }
+        }
+    }, [startIndex, filteredImages])
 
     const handleClick = (evt) => {
         // send down to SingleImage component to create the Modal with all the data about the image, that was clicked
@@ -105,7 +122,22 @@ const ShowImages = ({ tags, url, loggedIn, baseUrl, logout }) => {
 
     return (
         <>
-            {filteredImages.map(image => {
+            
+            {imagesToShow.map((image, i) => {
+                if (imagesToShow.length === i + 1) {
+                    return (
+                        // <span ref={lastImageRef}>
+                            <SingleImage
+                                ref={lastImageRef}
+                                key={image.name}
+                                name={image.name}
+                                viewno={image.viewno}
+                                src={image.location + image.name}
+                                loggedIn={loggedIn}
+                                handleClick={handleClick} />
+                        // </span>
+                    )
+                }
                 return (
                     <SingleImage
                         key={image.name}
@@ -134,7 +166,7 @@ export default ShowImages;
 const SingleImage = (props) => {
 
     return (<>
-        <span onClick={props.handleClick} name={props.name}
+        <span onClick={props.handleClick} name={props.name} ref={props.ref}
         // style={{ position: 'relative', textAlign: 'center' }}
         >
             <img src={props.src} alt="" />
